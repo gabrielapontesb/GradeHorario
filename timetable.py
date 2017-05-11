@@ -90,10 +90,56 @@ def criarGrade(lstHorarios, lstTurmas, lstAlocacoes, matriz):
         id_prof = alocacao[0]
         qtd_aulas = alocacao[2]
         turmas = alocacao[3]
+
         for turma in turmas:
-            alocar(id_prof, qtd_aulas, turma, matriz, dicProfessorDia)
+            print("--------------------------------------------------")
+            print(str(qtd_aulas) + " ALOCACOES PARA O PROF " + str(id_prof) + " NA TURMA " + str(turma))
+            chave = (id_prof, turma)
+
+            # Dicionario que relaciona o prof ao dia que ele esta alocado
+            if chave not in dicProfessorDia.keys():
+                dicProfessorDia[chave] = []
+
+            i = 0
+            while i < qtd_aulas:
+
+                dia = randint(1, 5)  # sorteando o dia
+                print("dia: " + str(dia))
+                alocar(id_prof, qtd_aulas, turma, matriz, dicProfessorDia, lstHorarios, chave, dia)
+                i += 1
 
     return matriz
+
+
+def alocar(id_prof, qtd_aulas, turma, matriz, dicProfessorDia, lstHorarios, chave, dia):
+
+        if dia not in dicProfessorDia[chave]: #se o professor nao der aula naquele dia
+            dicProfessorDia[chave].append(dia)
+
+            horario = sortearHorario(dia) #sorteando o horario
+
+            if matriz[horario][turma-1] == -1: #se o horario daquele dia estiver vago, aloca
+                matriz[horario][turma-1] = id_prof
+                print("alocado no horario:" + str(horario))
+                print()
+
+            else: #se nao estiver, procura o proximo horario
+                print("conflito com o professor: " + str(matriz[horario][turma-1]))
+                procurarProximoHorario(horario, turma, id_prof, matriz, dicProfessorDia, lstHorarios, chave)
+
+
+        else: #se o professor ja der aula, procurar proximo dia
+            print("conflito de dia")
+
+            if dia == 5:
+                proximo_dia = procurarProximoDia(dicProfessorDia, chave, 0)
+            else:
+                proximo_dia = procurarProximoDia(dicProfessorDia, chave, dia)
+
+            alocar(id_prof, qtd_aulas, turma, matriz, dicProfessorDia, lstHorarios, chave, proximo_dia)
+
+        print()
+
 
 
 def sortearHorario(dia):
@@ -111,117 +157,54 @@ def sortearHorario(dia):
 
 def procurarProximoDia(dicProfessorDia, chave, dia):
 
-    while dia < 5:
-        dia += 1
-        if dia not in dicProfessorDia[chave]:
-            return dia
+    proximo = dia + 1
 
-    if dia == 5:
-        dia = 0
-        while dia < 5:
-            dia += 1
-            if dia not in dicProfessorDia[chave]:
-                return dia
+    while (proximo <= 5):
+        if proximo not in dicProfessorDia[chave]:
+            return proximo
+
+        else:
+            proximo += 1
 
 
-def alocar(id_prof, qtd_aulas, turma, matriz, dicProfessorDia):
-
-    print(str(qtd_aulas) + " alocacoes para o prof " + str(id_prof) + " na turma " + str(turma))
-    chave = (id_prof, turma)
-
-    #Dicionario que relaciona o prof ao dia que ele esta alocado
-    if chave not in dicProfessorDia.keys():
-        dicProfessorDia[chave] = []
-
-    i = 0
-    while i < qtd_aulas:
-
-        dia = randint(1,5)  #sorteando o dia
-        print("dia: " + str(dia))
-        if dia not in dicProfessorDia[chave]: #se o professor nao der aula naquele dia
-            dicProfessorDia[chave].append(dia)
-            horario = sortearHorario(dia) #pode sortear o horario
-            if matriz[horario][turma-1] == -1:
-                matriz[horario][turma-1] = id_prof
-                print("alocado no horario:" + str(horario))
-                print()
-
-            # senão, procura o proximo horario
-            else:
-                print("CONFLITO COM O PROFESSOR: " + str(matriz[horario][turma-1]))
-                horario = achaProximoHorario(horario, turma, id_prof, matriz)
-                print("alocado no horario: " + str(horario))
-                print()
-
-
-        else: #se der aula, achar o proximo
-            dia = procurarProximoDia(dicProfessorDia, chave, dia)
-            #print("CONFLITO! próximo: " + str(dia))
-            #print("alocado")
-            dicProfessorDia[chave].append(dia)
-            horario = sortearHorario(dia)  # pode sortear o horario
-            if matriz[horario][turma-1] == -1:
-                matriz[horario][turma-1] = id_prof
-                print("alocado no horario:" + str(horario))
-                print()
-
-            # senão, procura o proximo horario
-            else:
-                print("CONFLITO COM O PROFESSOR: " + str(matriz[horario][turma-1]))
-                achaProximoHorario(horario, turma, id_prof, matriz)
-                print()
-
-        print()
-        i += 1
-
-    #i = 0
-
-    # while i < qtd_aulas:
-    #     horario = randint(0, 24)
-    #
-    #     print("horario " + str(horario) + " e turma " + str(turma))
-    #
-    #     # se tiver vazio, aloca
-    #     ##### VERIFICAR AULAS GEMINADAS
-    #     if matriz[horario][turma-1] == -1:
-    #         matriz[horario][turma-1] = id_prof
-    #         print("alocado")
-    #         print()
-    #
-    #     # senão, procura o proximo horario
-    #     else:
-    #         print("CONFLITO COM O PROFESSOR: " + str(matriz[horario][turma-1]))
-    #         achaProximoHorario(horario, turma, id_prof, matriz)
-    #         print("alocado")
-    #         print()
-    #
-    #     i += 1
-
-
-def achaProximoHorario(horario, turma, id_prof, matriz):
+#cada vez que ele encontrar um proximo, tem que ver se o prof ja nao possui aula naquele dia
+def procurarProximoHorario(horario, turma, id_prof, matriz, dicProfessorDia, lstHorarios, chave):
 
     proximo = horario + 1
-    print("ACHANDO O PROXIMO HORARIO: " + str(proximo))
-
-    while (proximo < 24):
+    while (proximo <= 24):
         if matriz[proximo][turma-1] == -1:
-            matriz[proximo][turma-1] = id_prof
-            print("alocado no horario: " + str(horario))
-            break
-        else:
-            proximo = proximo + 1
 
-    if (proximo >= 24):
-        proximo = 0
-        while (proximo != 24):
-            if matriz[proximo][turma-1] == -1:
+            print("proximo horario vago: " + str(proximo))
+            #se tiver vazio o proximo, verificar se o cara ja nao da aula naquele dia
+            possui = verificaProfPossuiAulaNoDia(dicProfessorDia, lstHorarios, proximo, chave)
+
+            if possui == False:
+                print("o prof nao possui aula nesse dia")
                 matriz[proximo][turma-1] = id_prof
-                print("alocado no horario: " + str(horario))
-                break
-            else:
-                proximo = proximo + 1
+                print("alocado no horario: " + str(proximo))
 
-    return 0
+            else:
+                proximo += 1
+
+        else:
+            proximo += 1
+
+
+def verificaProfPossuiAulaNoDia(dicProfessorDia, lstHorarios, horario, chave):
+
+    # dado um horario, ver a qual dia ele pertence e verificar se o professor ja da aula nesse dia
+    possui = dia = False
+
+    for indice in lstHorarios:
+        for i in indice:
+            if horario == i:
+                dia = i + 1
+                break
+
+    if dia in dicProfessorDia[chave]:
+        possui = True
+
+    return possui
 
 
 def imprimeMatriz(matriz):
