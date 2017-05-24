@@ -124,7 +124,7 @@ def alocar(id_prof, qtd_aulas, turma, matriz, dicProfessorDia, lstHorarios, chav
                 print()
 
             else: #se nao estiver, procura o proximo horario
-                print("conflito com o professor: " + str(matriz[horario][turma-1]))
+                print("conflito com o professor: " + str(matriz[horario][turma-1]) + "no horario " + str(horario))
                 procurarProximoHorario(horario, turma, id_prof, matriz, dicProfessorDia, lstHorarios, chave)
 
 
@@ -136,6 +136,7 @@ def alocar(id_prof, qtd_aulas, turma, matriz, dicProfessorDia, lstHorarios, chav
             else:
                 proximo_dia = procurarProximoDia(dicProfessorDia, chave, dia)
 
+            print("proximo dia: " + str(proximo_dia))
             alocar(id_prof, qtd_aulas, turma, matriz, dicProfessorDia, lstHorarios, chave, proximo_dia)
 
         print()
@@ -166,6 +167,9 @@ def procurarProximoDia(dicProfessorDia, chave, dia):
         else:
             proximo += 1
 
+            if proximo > 5:
+                proximo = 1
+
 
 #cada vez que ele encontrar um proximo, tem que ver se o prof ja nao possui aula naquele dia
 def procurarProximoHorario(horario, turma, id_prof, matriz, dicProfessorDia, lstHorarios, chave):
@@ -182,6 +186,7 @@ def procurarProximoHorario(horario, turma, id_prof, matriz, dicProfessorDia, lst
                 print("o prof nao possui aula nesse dia")
                 matriz[proximo][turma-1] = id_prof
                 print("alocado no horario: " + str(proximo))
+                break
 
             else:
                 proximo += 1
