@@ -177,10 +177,8 @@ def procurarProximoDia(dicProfessorDia, chave, dia):
 #cada vez que ele encontrar um proximo, tem que ver se o prof ja nao possui aula naquele dia
 def procurarProximoHorario(horario, turma, id_prof, matriz, dicProfessorDia, lstHorarios, chave):
 
-    qtd_iteracoes = 0
     proximo = horario + 1
     while (proximo <= 24):
-        qtd_iteracoes += 1
         if matriz[proximo][turma-1] == -1:
 
             print("proximo horario vago: " + str(proximo))
@@ -200,7 +198,7 @@ def procurarProximoHorario(horario, turma, id_prof, matriz, dicProfessorDia, lst
         else:
             proximo += 1
 
-            if proximo > 24 and qtd_iteracoes <= 24:
+            if proximo > 24:
                 proximo = 0
 
 
