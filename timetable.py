@@ -195,11 +195,14 @@ def procurarProximoHorario(horario, turma, id_prof, matriz, dicProfessorDia, lst
                 print("o prof possui aula nesse dia")
                 proximo += 1
 
+                # if proximo > 24:
+                #     proximo = 0
+
         else:
             proximo += 1
 
-            if proximo > 24:
-                proximo = 0
+        if proximo > 24:
+            proximo = 0
 
 
 def verificaProfPossuiAulaNoDia(dicProfessorDia, lstHorarios, horario, chave):
@@ -238,6 +241,6 @@ def criarExcel(matriz):
         for j in range(11):
             worksheet.write(i,j, matriz[i][j])
 
-    workbook.save("GradeHorario.xls")
+    workbook.save("GradeHorario-geminada.xls")
 
 main()
