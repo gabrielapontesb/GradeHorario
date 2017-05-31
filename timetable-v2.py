@@ -47,6 +47,14 @@ def criarHorarios():
         (20, 21, 22, 23, 24),
     ]
 
+
+def criarTurmas():
+    lst = []
+    for i in range(11):
+        lst.append(i)
+    return lst
+
+
 def criarAlocacoes():
 
     return [
@@ -116,10 +124,7 @@ def alocar(id_prof, qtd_aulas, turma, matriz, dicProfessorDia, lstHorarios, chav
 
             else: #se nao estiver, procura o proximo horario
                 print("conflito com o professor: " + str(matriz[horario][turma-1]) + " no horario " + str(horario))
-                if horario == 24:
-                     procurarProximoHorario(-1, turma, id_prof, matriz, dicProfessorDia, lstHorarios, chave)
-                else:
-                    procurarProximoHorario(horario, turma, id_prof, matriz, dicProfessorDia, lstHorarios, chave)
+                procurarProximoHorario(horario, turma, id_prof, matriz, dicProfessorDia, lstHorarios, chave)
 
 
         else: #se o professor ja der aula, procurar proximo dia
@@ -168,7 +173,11 @@ def procurarProximoDia(dicProfessorDia, chave, dia):
 #cada vez que ele encontrar um proximo, tem que ver se o prof ja nao possui aula naquele dia
 def procurarProximoHorario(horario, turma, id_prof, matriz, dicProfessorDia, lstHorarios, chave):
 
-    proximo = horario + 1
+    if horario == 24:
+        proximo = 0
+    else:
+        proximo = horario + 1
+
     while (proximo <= 24):
         if matriz[proximo][turma-1] == -1:
 
@@ -183,31 +192,31 @@ def procurarProximoHorario(horario, turma, id_prof, matriz, dicProfessorDia, lst
                 break
 
             else:
-                print("o prof possui aula nesse dia")
-                proximo += 1
 
-                # if proximo > 24:
-                #     proximo = 0
+                dia_corresp = CorrespondeDiaHorario(horario, lstHorarios)
+                print("o prof possui aula nesse dia: " + str(dia_corresp))
+                prox_dia = procurarProximoDia(dicProfessorDia, chave, dia_corresp)
+                proximo = lstHorarios[prox_dia-1][0] #primeiro horario do outro dia
+
+                print("proximo dia: " + str(prox_dia) + " horario: " + str(proximo))
 
         else:
             proximo += 1
 
-        if proximo > 24:
-            proximo = 0
 
+
+def CorrespondeDiaHorario(horario, lstHorarios):
+    for i in range(len(lstHorarios)):
+        if horario in lstHorarios[i]:
+            return i
 
 def verificaProfPossuiAulaNoDia(dicProfessorDia, lstHorarios, horario, chave):
 
     # dado um horario, ver a qual dia ele pertence e verificar se o professor ja da aula nesse dia
-    possui = dia = False
+    possui = False
 
-    for indice in lstHorarios:
-        for i in indice:
-            if horario == i:
-                dia = i + 1
-                break
-
-    if dia in dicProfessorDia[chave]:
+    dia = CorrespondeDiaHorario(horario, lstHorarios)
+    if dia+1 in dicProfessorDia[chave]:
         possui = True
 
     return possui
