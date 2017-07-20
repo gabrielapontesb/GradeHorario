@@ -1,0 +1,15 @@
+A escola X deseja automatizar seu processo de criação de grades de horários através de um sistema web. A diretora deve logar no sistema e criar uma grade de horário. O sistema implementará a heurística de Busca Tabu para otimizar a grade de acordo com as restrições inseridas. As restrições podem ser de dois tipos: hard (obrigatórias) e soft (desejáveis)
+
+Restrições hard físicas (inclusas no sistema):
+1) Uma turma só pode ter um professor alocado em cada horário
+2) Em um horário, cada professor só pode estar alocado em uma única turma
+3) Cada turma só pode ter no máximo uma aula por dia com cada professor
+
+Restrições hard pessoais (inseridas pelo usuário):
+4) O professor X não pode dar aula nos dias Y e Z
+5) O professor X não pode dar aula nos horarios A e B
+6) O professor X não pode dar aula nos horários C e D pelo menos E vezes por semana
+
+Restrições soft pessoais (inseridas pelo usuário):
+7) É desejável que o professor X dê aula nos horários F e G
+8) É desejável que o professor X dê aula nos
